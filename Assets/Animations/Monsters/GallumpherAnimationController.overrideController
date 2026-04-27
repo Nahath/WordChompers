@@ -7,5 +7,15 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: GallumpherAnimationController
-  m_Controller: {fileID: 0}
-  m_Clips: []
+  m_Controller: {fileID: 9100000, guid: 654580d9426e5834f9d4b5a31dedad3b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 85cf171e95d6b454d86df13c35717210, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ccf095be0150bd24e9b0d9ff37be060f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 8a34caa6eba67084d878132b81e3234a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 27774fd5a88c28a49b4c83a58bbe3ef6, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 576adfa466ff3194a850714d460dbe7e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 9ab475bde9acaaa4e82bab69157962a9, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: fb195871d7a634b40a822daa89593314, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6a05e8d31c524134ab3381147719dbe7, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 98e68abeb3a5eaa478f3ed5a62f385f1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f748310e8f790744bb9baa3360e0775f, type: 2}

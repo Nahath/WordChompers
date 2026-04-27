@@ -7,5 +7,15 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: BlagwerrAnimationController
-  m_Controller: {fileID: 0}
-  m_Clips: []
+  m_Controller: {fileID: 9100000, guid: 654580d9426e5834f9d4b5a31dedad3b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 8a34caa6eba67084d878132b81e3234a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 3f06f1bf64f83a948808cd35ed5ee1d0, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 85cf171e95d6b454d86df13c35717210, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: da32e7276f7d386438da840573e18a6e, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 98e68abeb3a5eaa478f3ed5a62f385f1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 49037b579550069459741357d9242d5c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: fb195871d7a634b40a822daa89593314, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5aa6f7554f55d8543bc8b2adc530d613, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 576adfa466ff3194a850714d460dbe7e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: f4a972639d1185c4c9179ec1a97dc8aa, type: 2}

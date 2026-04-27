@@ -20,49 +20,48 @@ public static class SceneBuilder
     private const float HeaderHeight = 80f;
     private const float LivesHeight  = 40f;
 
-    // ── Entry Points ──────────────────────────────────────────────────────────
+    // ── Entry Points (commented out — use Unity Editor directly instead) ────────
 
-    [MenuItem("Word Chompers/Build All (Prefabs + Scenes)")]
-    public static void BuildAll()
-    {
-        EnsureFolders();
-        CreatePrefabs();
-        BuildMainMenuScene();
-        BuildGameScene();
-        UpdateBuildSettings();
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        Debug.Log("[SceneBuilder] Build complete.");
-    }
+    // [MenuItem("Word Chompers/Build All (Scenes Only)")]
+    // public static void BuildAll()
+    // {
+    //     EnsureFolders();
+    //     BuildMainMenuScene();
+    //     BuildGameScene();
+    //     UpdateBuildSettings();
+    //     AssetDatabase.SaveAssets();
+    //     AssetDatabase.Refresh();
+    //     Debug.Log("[SceneBuilder] Build complete.");
+    // }
 
-    [MenuItem("Word Chompers/Build MainMenu Scene")]
-    public static void BuildMainMenuScene()
-    {
-        EnsureFolders();
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        PopulateMainMenu();
-        EditorSceneManager.SaveScene(scene, MainMenuPath);
-        Debug.Log("[SceneBuilder] MainMenu scene saved.");
-    }
+    // [MenuItem("Word Chompers/Build MainMenu Scene")]
+    // public static void BuildMainMenuScene()
+    // {
+    //     EnsureFolders();
+    //     var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+    //     PopulateMainMenu();
+    //     EditorSceneManager.SaveScene(scene, MainMenuPath);
+    //     Debug.Log("[SceneBuilder] MainMenu scene saved.");
+    // }
 
-    [MenuItem("Word Chompers/Build Game Scene")]
-    public static void BuildGameScene()
-    {
-        EnsureFolders();
-        var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        PopulateGame();
-        EditorSceneManager.SaveScene(scene, GamePath);
-        Debug.Log("[SceneBuilder] Game scene saved.");
-    }
+    // [MenuItem("Word Chompers/Build Game Scene")]
+    // public static void BuildGameScene()
+    // {
+    //     EnsureFolders();
+    //     var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+    //     PopulateGame();
+    //     EditorSceneManager.SaveScene(scene, GamePath);
+    //     Debug.Log("[SceneBuilder] Game scene saved.");
+    // }
 
-    [MenuItem("Word Chompers/Create Prefabs Only")]
-    public static void CreatePrefabsOnly()
-    {
-        EnsureFolders();
-        CreatePrefabs();
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-    }
+    // [MenuItem("Word Chompers/Create Prefabs Only")]
+    // public static void CreatePrefabsOnly()
+    // {
+    //     EnsureFolders();
+    //     CreatePrefabs();
+    //     AssetDatabase.SaveAssets();
+    //     AssetDatabase.Refresh();
+    // }
 
     // ── Folder Setup ──────────────────────────────────────────────────────────
 
@@ -98,12 +97,13 @@ public static class SceneBuilder
     {
         CreateGridCellPrefab();
         CreateLifeIconPrefab();
-        CreateMonsterPrefab<SquigglerMonster> ("SquigglerMonster",  GameColors.SkyBlue);
-        CreateMonsterPrefab<GorblerMonster>   ("GorblerMonster",    GameColors.CoralOrange);
-        CreateMonsterPrefab<ScaredyMonster>   ("ScaredyMonster",    GameColors.SunshineYellow);
-        CreateMonsterPrefab<BlagwerrMonster>  ("BlagwerrMonster",   GameColors.PlayfulPurple);
-        CreateMonsterPrefab<GallumpherMonster>("GallumpherMonster", GameColors.SoftTeal);
-        CreateMonsterPrefab<ZabyssMonster>    ("ZabyssMonster",     GameColors.DeepNavy);
+        const string MA = "Assets/Animations/Monsters/";
+        CreateMonsterPrefab<SquigglerMonster> ("SquigglerMonster",  GameColors.SkyBlue,        MA + "SquigglerAnimationController.overrideController");
+        CreateMonsterPrefab<GorblerMonster>   ("GorblerMonster",    GameColors.CoralOrange,    MA + "MonsterAnimator.controller");
+        CreateMonsterPrefab<ScaredyMonster>   ("ScaredyMonster",    GameColors.SunshineYellow, MA + "ScaredyAnimationController.overrideController");
+        CreateMonsterPrefab<BlagwerrMonster>  ("BlagwerrMonster",   GameColors.PlayfulPurple,  MA + "BlagwerrAnimationController.overrideController");
+        CreateMonsterPrefab<GallumpherMonster>("GallumpherMonster", GameColors.SoftTeal,       MA + "GallumpherAnimationController.overrideController");
+        CreateMonsterPrefab<ZabyssMonster>    ("ZabyssMonster",     GameColors.DeepNavy,       null); // create ZabyssAnimationController.overrideController to wire this
         Debug.Log("[SceneBuilder] Prefabs created.");
     }
 
@@ -142,19 +142,46 @@ public static class SceneBuilder
         SavePrefab(root, path);
     }
 
-    private static void CreateMonsterPrefab<T>(string name, Color color) where T : MonsterBase
+    private static void CreateMonsterPrefab<T>(string name, Color color, string controllerPath) where T : MonsterBase
     {
         string path = $"{MonstersPath}/{name}.prefab";
-        var root     = new GameObject(name);
-        var img      = root.AddComponent<Image>();
-        img.color    = color;
-        var animator = root.AddComponent<Animator>();
-        var monster  = root.AddComponent<T>();
-        var rt       = root.GetComponent<RectTransform>();
+
+        if (AssetDatabase.LoadAssetAtPath<GameObject>(path) != null)
+        {
+            // Prefab already exists — update only color and controller, leave everything else intact.
+            using (var scope = new PrefabUtility.EditPrefabContentsScope(path))
+            {
+                var root = scope.prefabContentsRoot;
+                var img  = root.GetComponent<Image>();
+                if (img != null) img.color = color;
+                var anim = root.GetComponent<Animator>();
+                if (anim != null && controllerPath != null)
+                {
+                    var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
+                    if (ctrl != null) anim.runtimeAnimatorController = ctrl;
+                    else Debug.LogWarning($"[SceneBuilder] AnimatorController not found at {controllerPath} — assign manually.");
+                }
+            }
+            return;
+        }
+
+        // Prefab doesn't exist — create it fresh.
+        var newRoot  = new GameObject(name);
+        var newImg   = newRoot.AddComponent<Image>();
+        newImg.color = color;
+        var animator = newRoot.AddComponent<Animator>();
+        if (controllerPath != null)
+        {
+            var ctrl = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(controllerPath);
+            if (ctrl != null) animator.runtimeAnimatorController = ctrl;
+            else Debug.LogWarning($"[SceneBuilder] AnimatorController not found at {controllerPath} — assign manually.");
+        }
+        var monster  = newRoot.AddComponent<T>();
+        var rt       = newRoot.GetComponent<RectTransform>();
         rt.sizeDelta = new Vector2(80f, 80f);
         Wire(monster, "animator",      animator);
         Wire(monster, "rectTransform", rt);
-        SavePrefab(root, path);
+        SavePrefab(newRoot, path);
     }
 
     private static void SavePrefab(GameObject root, string path)
@@ -323,7 +350,7 @@ public static class SceneBuilder
         playerRT.sizeDelta = new Vector2(80f, 80f);
         var playerAnim = playerGO.AddComponent<Animator>();
         var playerController = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
-            "Assets/Animations/MuncherAnimator.controller");
+            "Assets/Animations/Muncher/MuncherAnimator.controller");
         if (playerController != null)
             playerAnim.runtimeAnimatorController = playerController;
         else

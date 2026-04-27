@@ -60,9 +60,15 @@ public class MonsterSpawner : MonoBehaviour
 
     private IEnumerator SpawnLoop()
     {
+        // TEMP: fast first spawn for testing
+        yield return new WaitForSeconds(3f);
+        if (GameManager.Instance.State == GameState.Playing)
+            TrySpawnMonster();
+
         while (true)
         {
-            float interval = Mathf.Max(5f, 20f - (GameManager.Instance.CurrentLevel / 18f));
+            // TEMP: 50% interval reduction for testing
+            float interval = Mathf.Max(5f, 20f - (GameManager.Instance.CurrentLevel / 18f)) * 0.5f;
             yield return new WaitForSeconds(interval);
 
             if (GameManager.Instance.State == GameState.Playing)
@@ -93,15 +99,15 @@ public class MonsterSpawner : MonoBehaviour
 
         // Non-corner edge slots. Monster starts one step OUTSIDE the board.
 
-        // Top edge (cols 1-4), enters moving Down
+        // Top edge (cols 1-4), enters moving Down (row increases)
         for (int c = 1; c <= 4; c++)
             if (ManhattanDist(0, c, pr, pc) >= 4)
-                valid.Add((-1, c, Vector2Int.down));
+                valid.Add((-1, c, new Vector2Int(0, 1)));
 
-        // Bottom edge (cols 1-4), enters moving Up
+        // Bottom edge (cols 1-4), enters moving Up (row decreases)
         for (int c = 1; c <= 4; c++)
             if (ManhattanDist(5, c, pr, pc) >= 4)
-                valid.Add((6, c, Vector2Int.up));
+                valid.Add((6, c, new Vector2Int(0, -1)));
 
         // Left edge (rows 1-4), enters moving Right
         for (int r = 1; r <= 4; r++)

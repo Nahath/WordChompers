@@ -97,8 +97,19 @@ public class GridManager : MonoBehaviour
 
         var all = Enumerable.Range('A', 26).Select(i => (char)i).ToList();
         all.Remove(targetLetter);
+        // I and L look identical in some fonts — never put both on the same map.
+        if (targetLetter == 'I') all.Remove('L');
+        else if (targetLetter == 'L') all.Remove('I');
         Shuffle(all);
-        var others = all.Take(7).ToList();
+
+        var others = new List<char>();
+        foreach (char ch in all)
+        {
+            if (others.Count == 7) break;
+            if (ch == 'L' && others.Contains('I')) continue;
+            if (ch == 'I' && others.Contains('L')) continue;
+            others.Add(ch);
+        }
 
         int targetCount = Random.Range(5, 9); // 5..8
         int remaining   = 36 - targetCount;   // 28..31
@@ -128,7 +139,8 @@ public class GridManager : MonoBehaviour
             {
                 char letter  = letters[r * 6 + c];
                 bool isValid = letter == targetLetter;
-                cells[r, c].SetLetter(letter, isValid);
+                char display = Random.value < 0.5f ? char.ToLower(letter) : letter;
+                cells[r, c].SetLetter(display, isValid);
                 allWordsOnGrid.Add(letter.ToString());
                 if (isValid) validCount++;
             }

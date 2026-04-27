@@ -7,5 +7,15 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SquigglerAnimationController
-  m_Controller: {fileID: 0}
-  m_Clips: []
+  m_Controller: {fileID: 9100000, guid: 654580d9426e5834f9d4b5a31dedad3b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 8a34caa6eba67084d878132b81e3234a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 439ef23f27142034f8cddf951be4d440, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 85cf171e95d6b454d86df13c35717210, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 69b1d9e218349294e8c8a17080b72efa, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 576adfa466ff3194a850714d460dbe7e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 5f637a8f5bf93bb4e893184c030ca1ca, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: fb195871d7a634b40a822daa89593314, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 51a2767216722fd4397f8dd0da5d9aca, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 98e68abeb3a5eaa478f3ed5a62f385f1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: efda2629c74dd14448fe7764bc37c60d, type: 2}

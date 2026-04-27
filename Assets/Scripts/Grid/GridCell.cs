@@ -15,19 +15,20 @@ public class GridCell : MonoBehaviour
 
     // ── Content ───────────────────────────────────────────────────────────────
 
-    public void SetWord(string word, bool isValid)
+    public void SetWord(string word, bool isValid, float fontSize = 18f)
     {
-        DisplayText   = word;
-        HasContent    = true;
-        IsValidTarget = isValid;
-        wordText.text = word;
+        DisplayText       = word;
+        HasContent        = true;
+        IsValidTarget     = isValid;
+        wordText.fontSize = fontSize;
+        wordText.text     = word;
         wordText.gameObject.SetActive(true);
         SetBackground(false);
     }
 
-    public void SetLetter(char letter, bool isValid)
+    public void SetLetter(char letter, bool isValid, float fontSize = 36f)
     {
-        SetWord(letter.ToString(), isValid);
+        SetWord(letter.ToString(), isValid, fontSize);
     }
 
     public void ClearContent()
@@ -49,6 +50,6 @@ public class GridCell : MonoBehaviour
     private void SetBackground(bool isEmpty)
     {
         if (background == null) return;
-        background.color = Color.black;
+        background.color = Color.clear;
     }
 }

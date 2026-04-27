@@ -97,7 +97,7 @@ The mechanics will be the same as "Chomp Words" but with the following changes:
 
 1. The level header will just say "Chomp Letters". It will not show the letter to be chomped visually on screen, other than where it appears in the grid.
 2. The sound file that will be played on launch and on the timer will say "Chomp the letter [X]" where [X] is the actual letter to be chomped.
-3. The board will only have 8 unique letters per level, and the letter to be chomped will appear between 5 and 8 times. The rest will appear randomly but no less than twice and no more than 8 times
+3. The board will only have 8 unique letters per level, and the letter to be chomped will appear between 5 and 8 times. The rest will appear randomly but no less than twice and no more than 8 times. Each letter will have an equal chance of being either upper-case or lower-case
 4. There are no difficulty levels for different levels. However, monster difficulty will still increase as they get to higher levels
 5. The letter to be chomped will be chosen randomly. However, letters that have already appeared have twice the liklihood of appearing again compared to those that haven't, until they have appeared 3 times. At that point, they have half the likihood of appearing, and after 5 times, they won't appear at all.
 6. When an invalid letter is chomped, the audio will say "You chomped [letter that was chomped]. Only chomp [correct letter]"
@@ -112,7 +112,7 @@ Gorbler: Moves toward the side of the board opposite of where it entered. Never 
 
 Blagwerr: Doesn't start appearing until level 15. He has a 50% chance of moving toward the player. If two directions will move equally toward the player, choose the left/right instead of up/down direction. Otherwise, he moves the same direction as last move.
 
-Scaredy: Has a 50% chance of moving away from the player. If two directions will move equally away from the player, choose the left/right instead of up/down direction. Otherwise, he moves in the same direction as last time.
+Scaredy: First three moves are toward the opposite side of the board from which he entered. After that, he has a 50% chance of moving away from the player. If two directions will move equally away from the player, choose the left/right instead of up/down direction. Otherwise, he moves in the same direction as last time.
 
 Gallumpher: Behaves like the squiggler but moves 40% faster than other monsters. Doesn't appear until level 25
 

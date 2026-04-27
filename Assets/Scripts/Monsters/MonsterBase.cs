@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 
 // Abstract base for all monster types. Attach a subclass to each monster prefab.
@@ -61,7 +60,7 @@ public abstract class MonsterBase : MonoBehaviour
             float interval = baseInterval / SpeedMultiplier;
             yield return new WaitForSeconds(interval);
 
-            if (GameManager.Instance.State != GameState.Playing) continue;
+            if (!GameManager.Instance.CanPlayerAct) continue;
 
             Vector2Int dir = GetNextMove();
             lastMoveDir = dir;
@@ -80,16 +79,8 @@ public abstract class MonsterBase : MonoBehaviour
             row = nr;
             col = nc;
 
-            // If fully off-board, destroy.
-            if (row < -1 || row > 6 || col < -1 || col > 6)
-            {
-                DestroyMonster();
-                yield break;
-            }
-
             ApplyFacing(dir);
             yield return StartCoroutine(SlideTo(row, col));
-            if (animatorReady) animator.Play("Idle");
 
             CheckCollisions();
         }
@@ -101,7 +92,7 @@ public abstract class MonsterBase : MonoBehaviour
         Vector2 from = rectTransform.position;
         Vector2 to   = GridManager.Instance.GetCellCenter(targetRow, targetCol);
         float   t    = 0f;
-        float   dur  = 0.08f / SpeedMultiplier;
+        float   dur  = 0.48f / SpeedMultiplier;
 
         while (t < dur)
         {
@@ -110,16 +101,6 @@ public abstract class MonsterBase : MonoBehaviour
             yield return null;
         }
         rectTransform.position = to;
-
-        // Clip visibility at board edges (monsters should only show within the grid area).
-        UpdateVisibility();
-    }
-
-    private void UpdateVisibility()
-    {
-        bool onBoard = row >= 0 && row < 6 && col >= 0 && col < 6;
-        if (rectTransform != null)
-            rectTransform.gameObject.SetActive(true); // parent canvas mask handles clipping
     }
 
     // ── Abstract move logic (implemented by each subclass) ────────────────────
@@ -149,14 +130,6 @@ public abstract class MonsterBase : MonoBehaviour
     {
         if (animatorReady) animator.Play("Eat");
         AudioManager.Instance.PlaySFX("SFX/sfx_monster_eat");
-        StartCoroutine(ReturnToIdleAfterEat());
-    }
-
-    private IEnumerator ReturnToIdleAfterEat()
-    {
-        yield return new WaitForSeconds(0.9f); // 5 frames × 180ms
-        if (!isDestroyed && animatorReady)
-            animator.Play("Idle");
     }
 
     // ── Destruction ───────────────────────────────────────────────────────────

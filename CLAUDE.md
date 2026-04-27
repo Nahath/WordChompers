@@ -211,6 +211,10 @@ The `McpAutoStart` script handles starting the server automatically when Unity l
 - `uv` must be installed: `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
 - Verify with `uv --version`
 
+## Editor-Only Changes (Inspector Wiring, Scene Hierarchy, Prefab Setup)
+
+When a task requires changes that can only be made through the Unity Editor directly — such as wiring Inspector fields, arranging the scene hierarchy, configuring components, or setting up prefabs — do NOT write Editor scripts to automate it. Instead, provide the user with clear step-by-step instructions for what to do manually in the Unity Editor. Describe each action precisely: which GameObject to select, which component to look at, which field to set, and what value to assign.
+
 ## Coding Conventions
 - MonoBehaviours: one class per file, filename matches class name exactly
 - Singleton pattern: `public static T Instance { get; private set; }` + Awake check

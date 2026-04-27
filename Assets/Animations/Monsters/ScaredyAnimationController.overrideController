@@ -7,5 +7,15 @@ AnimatorOverrideController:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: ScaredyAnimationController
-  m_Controller: {fileID: 0}
-  m_Clips: []
+  m_Controller: {fileID: 9100000, guid: 654580d9426e5834f9d4b5a31dedad3b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 8a34caa6eba67084d878132b81e3234a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 0063e8742f9305843b8756ffae186aea, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 85cf171e95d6b454d86df13c35717210, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 7db4fb1de11e14548b499c565fff9f6e, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 576adfa466ff3194a850714d460dbe7e, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: cf6b282b4ba49524c92cd757ada1fd21, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 98e68abeb3a5eaa478f3ed5a62f385f1, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 68c5adb07f5e0954b91277369a6fc830, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: fb195871d7a634b40a822daa89593314, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 4a991a8a335976a46945baa0b1ed6489, type: 2}
