@@ -1,0 +1,47 @@
+# Unity generated
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Ll]ogs/
+/[Mm]emoryCaptures/
+/[Uu]ser[Ss]ettings/
+
+# Build output
+/[Bb]uild/
+/[Bb]uilds/
+/[Ee]xported[Oo]bj/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.csproj
+*.sln
+*.slnx
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Asset Store tools
+/[Aa]ssets/[Aa]sset[Ss]tore[Tt]ools*/
+
+# Crash reports
+sysinfo.txt
+/[Cc]rash[Rr]eports/
+
+# Claude Code local config
+.claude/
+
+# Session continuity file (local only)
+CURRENT_SESSION.md

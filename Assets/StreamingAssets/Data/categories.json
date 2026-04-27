@@ -1,0 +1,29 @@
+{
+  "categories": [
+    {
+      "name": "Food",
+      "minimumDifficulty": 1,
+      "levelHeader": "Eat All Words That Are Food"
+    },
+    {
+      "name": "Animals",
+      "minimumDifficulty": 1,
+      "levelHeader": "Eat All Words That Are Animals"
+    },
+    {
+      "name": "Reptiles",
+      "minimumDifficulty": 2,
+      "levelHeader": "Eat All Words That Are Reptiles"
+    },
+    {
+      "name": "Mammals",
+      "minimumDifficulty": 2,
+      "levelHeader": "Eat All Words That Are Mammals"
+    },
+    {
+      "name": "Birds",
+      "minimumDifficulty": 3,
+      "levelHeader": "Eat All Words That Are Birds"
+    }
+  ]
+}
