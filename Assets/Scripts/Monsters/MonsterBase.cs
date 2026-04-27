@@ -26,6 +26,8 @@ public abstract class MonsterBase : MonoBehaviour
     private Coroutine movementCoroutine;
     private bool      isDestroyed;
     private bool      animatorReady;
+    private int       alertTintRow = -1;
+    private int       alertTintCol = -1;
 
     // ── Initialization ────────────────────────────────────────────────────────
 
@@ -55,12 +57,27 @@ public abstract class MonsterBase : MonoBehaviour
 
     private IEnumerator MovementLoop()
     {
+        float interval = baseInterval / SpeedMultiplier;
+
+        // Pre-entry alert: total pre-move wait = interval, with the last 1s showing the tint.
+        float alertDuration = Mathf.Min(1f, interval);
+        yield return new WaitForSeconds(interval - alertDuration);
+        alertTintRow = row + entryDirection.y;
+        alertTintCol = col + entryDirection.x;
+        GridManager.Instance.SetCellAlertTint(alertTintRow, alertTintCol, true);
+        AudioManager.Instance.PlaySFX("SFX/sfx_monster_alert");
+        yield return new WaitForSeconds(alertDuration);
+        GridManager.Instance.SetCellAlertTint(alertTintRow, alertTintCol, false);
+        alertTintRow = -1;
+
+        // Main movement loop — first iteration fires immediately after the alert clears.
         while (!isDestroyed)
         {
-            float interval = baseInterval / SpeedMultiplier;
-            yield return new WaitForSeconds(interval);
-
-            if (!GameManager.Instance.CanPlayerAct) continue;
+            if (!GameManager.Instance.CanPlayerAct)
+            {
+                yield return new WaitForSeconds(interval);
+                continue;
+            }
 
             Vector2Int dir = GetNextMove();
             lastMoveDir = dir;
@@ -70,7 +87,7 @@ public abstract class MonsterBase : MonoBehaviour
             int nc = col + dir.x;
 
             // Moving off board: destroy silently.
-            if (nr < -1 || nr > 6 || nc < -1 || nc > 6)
+            if (nr < -1 || nr > GameConfig.GridRows || nc < -1 || nc > GameConfig.GridCols)
             {
                 DestroyMonster();
                 yield break;
@@ -81,8 +98,9 @@ public abstract class MonsterBase : MonoBehaviour
 
             ApplyFacing(dir);
             yield return StartCoroutine(SlideTo(row, col));
-
             CheckCollisions();
+
+            yield return new WaitForSeconds(interval);
         }
     }
 
@@ -138,6 +156,11 @@ public abstract class MonsterBase : MonoBehaviour
     {
         if (isDestroyed) return;
         isDestroyed = true;
+        if (alertTintRow >= 0)
+        {
+            GridManager.Instance.SetCellAlertTint(alertTintRow, alertTintCol, false);
+            alertTintRow = -1;
+        }
         if (movementCoroutine != null) StopCoroutine(movementCoroutine);
         MonsterSpawner.Instance.UnregisterMonster(this);
         Destroy(gameObject);

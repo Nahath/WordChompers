@@ -3,38 +3,19 @@ using TMPro;
 using System.Collections;
 
 // Attach to the Game Over panel (inactive by default).
+// GameplayUI activates/deactivates this panel based on game state.
 public class GameOverUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private TMP_Text gameOverText;       // "Game Over"
-    [SerializeField] private TMP_Text levelReachedText;   // "You made it to level X"
-    [SerializeField] private TMP_Text pressAnyButtonText; // shown after 4 seconds
+    [SerializeField] private TMP_Text gameOverText;
+    [SerializeField] private TMP_Text levelReachedText;
+    [SerializeField] private TMP_Text pressAnyButtonText;
 
-    void Start()
+    void OnEnable()
     {
+        levelReachedText.text = $"You made it to level {GameManager.Instance.CurrentLevel}";
         pressAnyButtonText.gameObject.SetActive(false);
-        GameManager.Instance.OnStateChanged += HandleStateChanged;
-    }
-
-    void OnDestroy()
-    {
-        if (GameManager.Instance != null)
-            GameManager.Instance.OnStateChanged -= HandleStateChanged;
-    }
-
-    private void HandleStateChanged(GameState state)
-    {
-        if (state == GameState.GameOver)
-        {
-            gameObject.SetActive(true);
-            levelReachedText.text = $"You made it to level {GameManager.Instance.CurrentLevel}";
-            pressAnyButtonText.gameObject.SetActive(false);
-            StartCoroutine(ShowPromptAfterDelay());
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
+        StartCoroutine(ShowPromptAfterDelay());
     }
 
     private IEnumerator ShowPromptAfterDelay()
@@ -47,9 +28,8 @@ public class GameOverUI : MonoBehaviour
 
     private IEnumerator WaitForAnyInput()
     {
-        // Wait one frame so the key that triggered game over doesn't count.
         yield return null;
-        while (!Input.anyKeyDown)
+        while (!Input.anyKeyDown && Input.touchCount <= 0)
             yield return null;
     }
 }

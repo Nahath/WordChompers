@@ -2397,9 +2397,9 @@ RectTransform:
   - {fileID: 2029045603}
   - {fileID: 1157630672}
   - {fileID: 1821826117}
-  - {fileID: 1450221977}
   - {fileID: 1840268600}
   - {fileID: 1649645786}
+  - {fileID: 1450221977}
   - {fileID: 918542924}
   - {fileID: 1910497933}
   - {fileID: 1524855852}
@@ -2431,6 +2431,10 @@ MonoBehaviour:
   livesContainer: {fileID: 918542924}
   lifeIconPrefab: {fileID: 928050725103984132, guid: ed0bced70e2dbb44db8c100982cbfa24, type: 3}
   gearButton: {fileID: 1157630673}
+  pauseMenuPanel: {fileID: 1111123190}
+  gameOverPanel: {fileID: 1030082498}
+  levelCompletePanel: {fileID: 1715998248}
+  gameCompletePanel: {fileID: 1216315748}
   dpadPanel: {fileID: 1910497932}
   chompButtonPanel: {fileID: 1524855851}
 --- !u!114 &1103752681

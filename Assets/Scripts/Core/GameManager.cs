@@ -81,6 +81,7 @@ public class GameManager : MonoBehaviour
     // Called by GameSceneLoader after all references are ready and data is loaded.
     public void BeginLevel()
     {
+        OnMonstersShouldClear?.Invoke();
         validChompsThisLevel    = 0;
         inExtendedReminderMode  = false;
         reminderTimer           = 10f;

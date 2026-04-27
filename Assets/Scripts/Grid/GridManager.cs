@@ -16,7 +16,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private float cellWidth  = 160f;
     [SerializeField] private float cellHeight = 100f;
 
-    private GridCell[,] cells       = new GridCell[6, 6];
+    private GridCell[,] cells       = new GridCell[GameConfig.GridRows, GameConfig.GridCols];
     private int         validCount;
     private bool        levelDone;
     private List<string> allWordsOnGrid = new List<string>();
@@ -29,8 +29,8 @@ public class GridManager : MonoBehaviour
 
     void Start()
     {
-        for (int r = 0; r < 6; r++)
-            for (int c = 0; c < 6; c++)
+        for (int r = 0; r < GameConfig.GridRows; r++)
+            for (int c = 0; c < GameConfig.GridCols; c++)
                 cells[r, c] = Instantiate(cellPrefab, gridContainer);
     }
 
@@ -48,8 +48,8 @@ public class GridManager : MonoBehaviour
         if (loader.Words == null || loader.Words.Length == 0)
         {
             Debug.LogError("[GridManager] No word data — add StreamingAssets/Data/words.json. Grid will be empty.");
-            for (int r = 0; r < 6; r++)
-                for (int c = 0; c < 6; c++)
+            for (int r = 0; r < GameConfig.GridRows; r++)
+                for (int c = 0; c < GameConfig.GridCols; c++)
                     cells[r, c].ClearContent();
             return new List<string>();
         }
@@ -68,19 +68,19 @@ public class GridManager : MonoBehaviour
         }
         if (outCat.Count == 0) outCat = inCat; // fallback
 
-        int validTarget = Random.Range(9, 16); // 9..15
-        int invalidTarget = 36 - validTarget;
+        int validTarget   = Random.Range(GameConfig.WordValidMin, GameConfig.WordValidMax + 1);
+        int invalidTarget = GameConfig.TotalCells - validTarget;
 
         var slots = new List<(string word, bool isValid)>();
-        for (int i = 0; i < validTarget;  i++) slots.Add((WeightedRandom(inCat,  previousWords).word, true));
+        for (int i = 0; i < validTarget;   i++) slots.Add((WeightedRandom(inCat,  previousWords).word, true));
         for (int i = 0; i < invalidTarget; i++) slots.Add((WeightedRandom(outCat, previousWords).word, false));
 
         Shuffle(slots);
 
-        for (int r = 0; r < 6; r++)
-            for (int c = 0; c < 6; c++)
+        for (int r = 0; r < GameConfig.GridRows; r++)
+            for (int c = 0; c < GameConfig.GridCols; c++)
             {
-                var (word, isValid) = slots[r * 6 + c];
+                var (word, isValid) = slots[r * GameConfig.GridCols + c];
                 cells[r, c].SetWord(word, isValid);
                 allWordsOnGrid.Add(word);
                 if (isValid) validCount++;
@@ -105,39 +105,39 @@ public class GridManager : MonoBehaviour
         var others = new List<char>();
         foreach (char ch in all)
         {
-            if (others.Count == 7) break;
+            if (others.Count == GameConfig.LetterOtherCount) break;
             if (ch == 'L' && others.Contains('I')) continue;
             if (ch == 'I' && others.Contains('L')) continue;
             others.Add(ch);
         }
 
-        int targetCount = Random.Range(5, 9); // 5..8
-        int remaining   = 36 - targetCount;   // 28..31
+        int targetCount = Random.Range(GameConfig.LetterTargetMin, GameConfig.LetterTargetMax + 1);
+        int remaining   = GameConfig.TotalCells - targetCount;
 
-        int[] otherCounts = Enumerable.Repeat(2, 7).ToArray();
-        remaining -= 14;
+        int[] otherCounts = Enumerable.Repeat(GameConfig.LetterOtherBase, GameConfig.LetterOtherCount).ToArray();
+        remaining -= GameConfig.LetterOtherBase * GameConfig.LetterOtherCount;
 
-        var idxOrder = Enumerable.Range(0, 7).OrderBy(_ => Random.value).ToList();
+        var idxOrder = Enumerable.Range(0, GameConfig.LetterOtherCount).OrderBy(_ => Random.value).ToList();
         int cursor = 0;
         while (remaining > 0)
         {
-            int i = idxOrder[cursor % 7];
-            if (otherCounts[i] < 8) { otherCounts[i]++; remaining--; }
+            int i = idxOrder[cursor % GameConfig.LetterOtherCount];
+            if (otherCounts[i] < GameConfig.LetterOtherMax) { otherCounts[i]++; remaining--; }
             cursor++;
         }
 
         var letters = new List<char>();
         for (int i = 0; i < targetCount; i++) letters.Add(targetLetter);
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < GameConfig.LetterOtherCount; i++)
             for (int j = 0; j < otherCounts[i]; j++)
                 letters.Add(others[i]);
 
         Shuffle(letters);
 
-        for (int r = 0; r < 6; r++)
-            for (int c = 0; c < 6; c++)
+        for (int r = 0; r < GameConfig.GridRows; r++)
+            for (int c = 0; c < GameConfig.GridCols; c++)
             {
-                char letter  = letters[r * 6 + c];
+                char letter  = letters[r * GameConfig.GridCols + c];
                 bool isValid = letter == targetLetter;
                 char display = Random.value < 0.5f ? char.ToLower(letter) : letter;
                 cells[r, c].SetLetter(display, isValid);
@@ -150,7 +150,7 @@ public class GridManager : MonoBehaviour
 
     public void TryChomp(int row, int col)
     {
-        if (row < 0 || row >= 6 || col < 0 || col >= 6) return;
+        if (row < 0 || row >= GameConfig.GridRows || col < 0 || col >= GameConfig.GridCols) return;
         var cell = cells[row, col];
         if (!cell.HasContent) return;
 
@@ -178,25 +178,31 @@ public class GridManager : MonoBehaviour
 
     public bool HasContentAt(int row, int col)
     {
-        if (row < 0 || row >= 6 || col < 0 || col >= 6) return false;
+        if (row < 0 || row >= GameConfig.GridRows || col < 0 || col >= GameConfig.GridCols) return false;
         return cells[row, col].HasContent;
     }
 
     // Returns world/canvas position of a cell (or extrapolated off-board position for monsters).
     public Vector2 GetCellCenter(int row, int col)
     {
-        if (row >= 0 && row < 6 && col >= 0 && col < 6)
+        if (row >= 0 && row < GameConfig.GridRows && col >= 0 && col < GameConfig.GridCols)
             return cells[row, col].transform.position;
 
-        int cr = Mathf.Clamp(row, 0, 5);
-        int cc = Mathf.Clamp(col, 0, 5);
+        int cr = Mathf.Clamp(row, 0, GameConfig.GridRows - 1);
+        int cc = Mathf.Clamp(col, 0, GameConfig.GridCols - 1);
         Vector2 refPos = cells[cr, cc].transform.position;
         return refPos + new Vector2((col - cc) * cellWidth, -(row - cr) * cellHeight);
     }
 
+    public void SetCellAlertTint(int row, int col, bool tinted)
+    {
+        if (row < 0 || row >= GameConfig.GridRows || col < 0 || col >= GameConfig.GridCols) return;
+        cells[row, col].SetAlertTint(tinted);
+    }
+
     public void SetCellPlayerOccupied(int row, int col, bool occupied)
     {
-        if (row < 0 || row >= 6 || col < 0 || col >= 6) return;
+        if (row < 0 || row >= GameConfig.GridRows || col < 0 || col >= GameConfig.GridCols) return;
         cells[row, col].SetPlayerOccupied(occupied);
     }
 

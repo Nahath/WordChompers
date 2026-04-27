@@ -106,7 +106,7 @@ public class PlayerController : MonoBehaviour
             case 3: nc++; break; // right
         }
 
-        if (nr < 0 || nr >= 6 || nc < 0 || nc >= 6) return;
+        if (nr < 0 || nr >= GameConfig.GridRows || nc < 0 || nc >= GameConfig.GridCols) return;
 
         GridManager.Instance.SetCellPlayerOccupied(row, col, false);
         row = nr; col = nc;

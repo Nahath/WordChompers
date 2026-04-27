@@ -19,6 +19,12 @@ public class GameplayUI : MonoBehaviour
     [Header("Gear / Pause")]
     [SerializeField] private Button gearButton;
 
+    [Header("Overlay Panels")]
+    [SerializeField] private GameObject pauseMenuPanel;
+    [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject levelCompletePanel;
+    [SerializeField] private GameObject gameCompletePanel;
+
     [Header("Mobile Controls (shown on Android/iOS)")]
     [SerializeField] private GameObject dpadPanel;
     [SerializeField] private GameObject chompButtonPanel;
@@ -98,6 +104,9 @@ public class GameplayUI : MonoBehaviour
 
     private void HandleStateChanged(GameState state)
     {
-        // Gameplay UI itself stays visible; panels handle their own visibility.
+        if (pauseMenuPanel     != null) pauseMenuPanel.SetActive(state == GameState.Paused);
+        if (gameOverPanel      != null) gameOverPanel.SetActive(state == GameState.GameOver);
+        if (levelCompletePanel != null) levelCompletePanel.SetActive(state == GameState.LevelComplete);
+        if (gameCompletePanel  != null) gameCompletePanel.SetActive(state == GameState.GameComplete);
     }
 }

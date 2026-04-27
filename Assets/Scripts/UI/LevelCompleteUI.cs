@@ -3,36 +3,17 @@ using TMPro;
 using System.Collections;
 
 // Attach to the Level Complete panel (inactive by default).
+// GameplayUI activates/deactivates this panel based on game state.
 public class LevelCompleteUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private TMP_Text levelCompleteText;
-    [SerializeField] private TMP_Text proceedPromptText; // shown after 3 seconds
+    [SerializeField] private TMP_Text proceedPromptText;
 
-    void Start()
+    void OnEnable()
     {
         proceedPromptText.gameObject.SetActive(false);
-        GameManager.Instance.OnStateChanged += HandleStateChanged;
-    }
-
-    void OnDestroy()
-    {
-        if (GameManager.Instance != null)
-            GameManager.Instance.OnStateChanged -= HandleStateChanged;
-    }
-
-    private void HandleStateChanged(GameState state)
-    {
-        if (state == GameState.LevelComplete)
-        {
-            gameObject.SetActive(true);
-            proceedPromptText.gameObject.SetActive(false);
-            StartCoroutine(ShowPromptAfterDelay());
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
+        StartCoroutine(ShowPromptAfterDelay());
     }
 
     private IEnumerator ShowPromptAfterDelay()

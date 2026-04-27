@@ -44,6 +44,12 @@ public class GridCell : MonoBehaviour
 
     // ── Visual State ──────────────────────────────────────────────────────────
 
+    public void SetAlertTint(bool tinted)
+    {
+        if (background == null) return;
+        background.color = tinted ? new Color(1f, 0.15f, 0.15f, 0.55f) : Color.clear;
+    }
+
     // Call when the player enters/leaves this cell so the border highlights.
     public void SetPlayerOccupied(bool occupied) { }
 

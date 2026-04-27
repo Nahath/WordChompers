@@ -99,25 +99,25 @@ public class MonsterSpawner : MonoBehaviour
 
         // Non-corner edge slots. Monster starts one step OUTSIDE the board.
 
-        // Top edge (cols 1-4), enters moving Down (row increases)
-        for (int c = 1; c <= 4; c++)
-            if (ManhattanDist(0, c, pr, pc) >= 4)
+        // Top edge (cols 1 to GridCols-2), enters moving Down (row increases)
+        for (int c = 1; c <= GameConfig.GridCols - 2; c++)
+            if (ManhattanDist(0, c, pr, pc) >= GameConfig.MonsterSpawnMinDistance)
                 valid.Add((-1, c, new Vector2Int(0, 1)));
 
-        // Bottom edge (cols 1-4), enters moving Up (row decreases)
-        for (int c = 1; c <= 4; c++)
-            if (ManhattanDist(5, c, pr, pc) >= 4)
-                valid.Add((6, c, new Vector2Int(0, -1)));
+        // Bottom edge (cols 1 to GridCols-2), enters moving Up (row decreases)
+        for (int c = 1; c <= GameConfig.GridCols - 2; c++)
+            if (ManhattanDist(GameConfig.GridRows - 1, c, pr, pc) >= GameConfig.MonsterSpawnMinDistance)
+                valid.Add((GameConfig.GridRows, c, new Vector2Int(0, -1)));
 
-        // Left edge (rows 1-4), enters moving Right
-        for (int r = 1; r <= 4; r++)
-            if (ManhattanDist(r, 0, pr, pc) >= 4)
+        // Left edge (rows 1 to GridRows-2), enters moving Right
+        for (int r = 1; r <= GameConfig.GridRows - 2; r++)
+            if (ManhattanDist(r, 0, pr, pc) >= GameConfig.MonsterSpawnMinDistance)
                 valid.Add((r, -1, Vector2Int.right));
 
-        // Right edge (rows 1-4), enters moving Left
-        for (int r = 1; r <= 4; r++)
-            if (ManhattanDist(r, 5, pr, pc) >= 4)
-                valid.Add((r, 6, Vector2Int.left));
+        // Right edge (rows 1 to GridRows-2), enters moving Left
+        for (int r = 1; r <= GameConfig.GridRows - 2; r++)
+            if (ManhattanDist(r, GameConfig.GridCols - 1, pr, pc) >= GameConfig.MonsterSpawnMinDistance)
+                valid.Add((r, GameConfig.GridCols, Vector2Int.left));
 
         return valid;
     }

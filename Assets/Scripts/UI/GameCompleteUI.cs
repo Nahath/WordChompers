@@ -3,7 +3,7 @@ using TMPro;
 using System.Collections;
 
 // Attach to the Game Complete panel (inactive by default).
-// Assign a ParticleSystem for the fireworks effect.
+// GameplayUI activates/deactivates this panel based on game state.
 public class GameCompleteUI : MonoBehaviour
 {
     [Header("References")]
@@ -11,32 +11,16 @@ public class GameCompleteUI : MonoBehaviour
     [SerializeField] private TMP_Text       returnPromptText;
     [SerializeField] private ParticleSystem fireworks;
 
-    void Start()
+    void OnEnable()
     {
         returnPromptText.gameObject.SetActive(false);
-        GameManager.Instance.OnStateChanged += HandleStateChanged;
+        if (fireworks != null) fireworks.Play();
+        StartCoroutine(ShowPromptAfterDelay());
     }
 
-    void OnDestroy()
+    void OnDisable()
     {
-        if (GameManager.Instance != null)
-            GameManager.Instance.OnStateChanged -= HandleStateChanged;
-    }
-
-    private void HandleStateChanged(GameState state)
-    {
-        if (state == GameState.GameComplete)
-        {
-            gameObject.SetActive(true);
-            if (fireworks != null) fireworks.Play();
-            returnPromptText.gameObject.SetActive(false);
-            StartCoroutine(ShowPromptAfterDelay());
-        }
-        else
-        {
-            gameObject.SetActive(false);
-            if (fireworks != null) fireworks.Stop();
-        }
+        if (fireworks != null) fireworks.Stop();
     }
 
     private IEnumerator ShowPromptAfterDelay()
