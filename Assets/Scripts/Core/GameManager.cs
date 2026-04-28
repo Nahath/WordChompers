@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     private int            validChompsThisLevel;
     private bool           inExtendedReminderMode;
     private float          reminderTimer;
+    private bool           letterUseNameFile;
     private List<string>   previousLevelWords = new List<string>();
     private Dictionary<char, int> letterHistory = new Dictionary<char, int>();
 
@@ -117,7 +118,7 @@ public class GameManager : MonoBehaviour
         previousLevelWords = gridManager.GenerateWordLevel(
             CurrentDifficulty, CurrentCategoryName, previousLevelWords);
 
-        AudioManager.Instance.PlaySFX("Categories/header_" + CurrentCategoryName.ToLower());
+        AudioManager.Instance.PlaySFX("Categories/Eat_" + CurrentCategoryName);
 
         playerController.ResetForLevel();
         monsterSpawner.StartSpawning();
@@ -132,11 +133,8 @@ public class GameManager : MonoBehaviour
 
         gridManager.GenerateLetterLevel(CurrentTargetLetter);
 
-        AudioManager.Instance.PlaySequence(new[]
-        {
-            "Spoken/spoken_chomp_the_letter",
-            "Letters/letter_" + CurrentTargetLetter.ToString().ToLower()
-        });
+        letterUseNameFile = CurrentLevel <= 3 || Random.value < 0.5f;
+        AudioManager.Instance.PlaySFX(LetterReminderFile());
 
         playerController.ResetForLevel();
         monsterSpawner.StartSpawning();
@@ -180,7 +178,7 @@ public class GameManager : MonoBehaviour
         var loader = GameDataLoader.Instance;
         if (loader?.Levels != null)
             foreach (var e in loader.Levels)
-                if (e.level == level) return e.difficulty;
+                if (level >= e.start && level <= e.end) return e.difficulty;
         return 5;
     }
 
@@ -198,16 +196,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private string LetterReminderFile()
+    {
+        string suffix = letterUseNameFile ? "_name" : "_sound";
+        return "Letters/" + CurrentTargetLetter.ToString().ToLower() + suffix;
+    }
+
     private void PlayReminderSound()
     {
         if (Mode == GameMode.ChompWords)
-            AudioManager.Instance.PlaySFX("Categories/header_" + CurrentCategoryName.ToLower());
+            AudioManager.Instance.PlaySFX("Categories/Eat_" + CurrentCategoryName);
         else
-            AudioManager.Instance.PlaySequence(new[]
-            {
-                "Spoken/spoken_chomp_the_letter",
-                "Letters/letter_" + CurrentTargetLetter.ToString().ToLower()
-            });
+            AudioManager.Instance.PlaySFX(LetterReminderFile());
     }
 
     // ── Chomp Reports (called by GridManager) ─────────────────────────────────
@@ -235,20 +235,9 @@ public class GameManager : MonoBehaviour
         playerController.PlaySickAnimation();
 
         if (Mode == GameMode.ChompWords)
-            AudioManager.Instance.PlaySequence(new[]
-            {
-                "Words/word_"           + wordOrLetter.ToLower(),
-                "Spoken/spoken_is_not_a",
-                "Categories/category_" + CurrentCategoryName.ToLower()
-            });
+            AudioManager.Instance.PlaySFX("Words/" + wordOrLetter.ToLower() + "_wrong");
         else
-            AudioManager.Instance.PlaySequence(new[]
-            {
-                "Spoken/spoken_you_chomped",
-                "Letters/letter_"      + wordOrLetter.ToLower(),
-                "Spoken/spoken_only_chomp",
-                "Letters/letter_"      + CurrentTargetLetter.ToString().ToLower()
-            });
+            AudioManager.Instance.PlaySFX("Letters/" + wordOrLetter.ToLower() + "_wrong");
 
         yield return new WaitForSeconds(0.5f);
 

@@ -22,7 +22,7 @@ The game will generate each level based on data files, unless they are doing the
 
 ### Category File:
 
-This will have a list of categories for words. These will include "Food", "Animals", "Reptiles", and "Mammals". Categories have two fields. "Minimum Difficulty" as an integer and "Level Header" as a string. An example would be for the category "Food", it would have a minimum difficulty of 1 and a Level Header of "Eat All Words That Are Food".
+This will have a list of categories for words. These will include "Food", "Animals", "Reptiles", and "Clothes". Categories have two fields. "Minimum Difficulty" as an integer and "Level Header" as a string. An example would be for the category "Food", it would have a minimum difficulty of 1 and a Level Header of "Eat Food".
 
 ### Word File:
 
@@ -30,7 +30,7 @@ This will contain a long list of words, and for each, it will have a difficulty 
 
 ### Levels:
 
-This will be a series of numbers (each number representing a level) with a separate field for the difficulty of that level. For example, levels 1, 2, and 3 will have a difficulty level of 1.
+Each object will represent a collection of levels and their difficulty. It will have 3 fields: difficulty, start, end. For example, if difficulty was 2, start was 20, and end was 30, it would mean that every level from 20-30 is of difficulty 2.
 
 ## Gameplay Details:
 
@@ -63,6 +63,8 @@ If they are on a touchscreen without a controller, there will be a D-Pad to the 
 
 In the top right of the screen, there will be a gear icon. If tapped or clicked on, it will pause the game an open an options menu. If the user is playing with a controller, this will be opened with the button most commonly associated with opening menus or pausing (such as the start button). The menu will be an opaque square in the middle of the board with the following options: Volume (controlled by a slider), Return to Game, and Quit. Each will have the standard functionality that games would usually have with those buttons/sliders.
 
+Some categories won't have any words of some difficulties. If this is the case, just make sure that category is not chosen when on that difficulty.
+
 #### Chomp Letters
 
 It builds a level like "Chomp Words", but instead of words, it will just have a single letter in each square. Data files are not needed for this mode. Other changes are described in the gameplay for "Chomp Letters"
@@ -75,9 +77,9 @@ Gameplay is very similar between the two. "Chomp Words" will be explained first,
 
 The player starts with three extra lives (i.e. 4 lives total) and gains a new one each time he finishes five levels.
 
-When the level launches, it will play a sound file that states the level's category header. It will replay that sound file every 10 seconds until the player has chomped two valid words. It will then play on a 30 second timer that gets reset every time they chomp a valid word.
+When the level launches, it will play a sound file titled "Eat\_[Category].mp3". It will replay that sound file every 10 seconds until the player has chomped two valid words. It will then play on a 30 second timer that gets reset every time they chomp a valid word.
 
-Player starts in the top left square of the grid and can go up, down, left, or right using a standard control scheme, including pressing the appropriate direction on the touchscreen D-Pad. No movement occurs if they try to move past the edge. There is a cooldown of 200 milliseconds after each move before they can move again, and if they are holding a movement key when the cooldown ends, they'll move in that direction. If multiple directions are being held, the game will move them randomly in one of the directions being held. A simple animation will play whenever the player moves, and there will be two idle states for the player character: If there is no word in the square, he will have his mouth closed. If there is a word, his mouth will be open over the word with the word visible. Pressing the "Chomp" button (either on the touchscreen, any input button on a controller that's commonly associated with a game action, or the spacebar on a keyboard) will have him eat the word. If the word is in the level's category, it will play a munching sound, an eating animation, and the word will disappear. If the word is not in the category, it will play a sound file that says "[chomped word] is not a [category]". The game will pause while an animation plays of their character looking sick, the player loses one life, all monsters disappear, then the game continues.
+Player starts in the top left square of the grid and can go up, down, left, or right using a standard control scheme, including pressing the appropriate direction on the touchscreen D-Pad. No movement occurs if they try to move past the edge. There is a cooldown of 200 milliseconds after each move before they can move again, and if they are holding a movement key when the cooldown ends, they'll move in that direction. If multiple directions are being held, the game will move them randomly in one of the directions being held. A simple animation will play whenever the player moves, and there will be two idle states for the player character: If there is no word in the square, he will have his mouth closed. If there is a word, his mouth will be open over the word with the word visible. Pressing the "Chomp" button (either on the touchscreen, any input button on a controller that's commonly associated with a game action, or the spacebar on a keyboard) will have him eat the word. If the word is in the level's category, it will play a munching sound, an eating animation, and the word will disappear. If the word is not in the category, it will play a sound file that that is titled [word eaten]\_wrong.mp3, so each word in the game will have its own sound file for when it is eaten in error. The game will pause while an animation plays of their character looking sick, the player loses one life, all monsters disappear, then the game continues.
 
 Occasionally, a randomly chosen monster will enter the board from a random edge space, but they will not enter within 3 squares of the player or on a corner (i.e. since all movement is left/right/up/down, it would take a minimum of 4 moves to reach the player). The monster will act according to the "Monster Behavior" section below. The frequency of appearance will depend on the level number. When the map starts, a timer will begin, and when the timer ends, a monster appears, and the timer restarts. The amount of time on the timer (in seconds) is 20 - ([level number]/18). One second before the monster spawns, the square he is about to enter will tern red and an alert sound will play. The square will then change back to normal when the monster actually appears.
 
@@ -89,18 +91,18 @@ If the player loses all their lives, large letters in the center of the screen w
 
 After eating all valid words in the grid, a fanfare sound will play, and large letters will appear in the center of the screen saying "Level Complete!". After three seconds, smaller text beneath will say "Press any button to proceed" or "tap to proceed" if they are on a touchscreen. When they do so, the next level will start.
 
-The game ends if the player clears 100 levels. In this case, there will be a fireworks animation with large words that say "Congratulations! You Are a Master Muncher!". After a five second pause, it will then have smaller text below that says "Press any key to return to the main menu", or if they are on a touchscreen, "Tap to return to main menu". Functionality to do this will also be enabled.
+The game ends if the player clears 100 levels. In this case, there will be a fireworks animation with large words that say "Congratulations! You Are a Champion Chomper!". After a five second pause, it will then have smaller text below that says "Press any key to return to the main menu", or if they are on a touchscreen, "Tap to return to main menu". Functionality to do this will also be enabled.
 
 #### Chomp Letters
 
 The mechanics will be the same as "Chomp Words" but with the following changes:
 
 1. The level header will just say "Chomp Letters". It will not show the letter to be chomped visually on screen, other than where it appears in the grid.
-2. The sound file that will be played on launch and on the timer will say "Chomp the letter [X]" where [X] is the actual letter to be chomped.
+2. There are two options for the sound file that will be played at launch and on the timer. One will be titled "[letter]\_name.mp3", and the other will be "[letter]\_sound.mp3". For the first three maps, choose "[letter]\_name.mp3", and after that, randomly choose one of the two files at the beginning of each level and play only it for that level.
 3. The board will only have 7 unique letters per level, and the letter to be chomped will appear between 7 and 10 times. The rest will appear randomly but no less than twice and no more than 8 times. Each letter will have an equal chance of being either upper-case or lower-case
 4. There are no difficulty levels for different levels. However, monster difficulty will still increase as they get to higher levels
 5. The letter to be chomped will be chosen randomly. However, letters that have already appeared have twice the liklihood of appearing again compared to those that haven't, until they have appeared 3 times. At that point, they have half the likihood of appearing, and after 5 times, they won't appear at all.
-6. When an invalid letter is chomped, the audio will say "You chomped [letter that was chomped]. Only chomp [correct letter]"
+6. When an invalid letter is chomped, play an audio file titled "[letter]\_wrong.mp3", along with all the other effects.
 
 #### Monster Behavior
 
@@ -143,3 +145,25 @@ Game Over
 Monster eating
 Game start button pressed
 In addition to every event specified elsewhere that includes a sound event
+
+### Word Difficulty Definitions:
+
+#### Difficulty 1
+
+Maximum of 4 letters. Every letter must make its most common sound (For example, "back" would be valid, but "cake" would not be, as the "a" makes its long sound and the "e" is silent). Words should be very common, such as those that appear in children's books
+
+#### Difficulty 2
+
+Maximum of 5 characters. If 5 characters, every letter must make its most common sound. If 4 letters or fewer, letters are allowed only to make sounds they frequently make (Here, "cake" would be valid because that's a common sound structure, but "pho" would be invalid because an "o" rarely makes the sound used in this word). Words should be very common, like those that appear in children's books.
+
+#### Difficulty 3
+
+Maximum of 7 characters. If a word is 6 or 7 characters, every letter must make either the most common sound or follow a standard structure: For example, "Jumping" is appropriate because the -ing sound is very common. "Follow" would not be appropriate because "ow" usually makes a different sound. Words can be a little less common, especially if they are short.
+
+#### Difficulty 4
+
+Maximum of 9 characters. Same rules as difficulty 3, except that a word can be up to 7 characters with non-standard sounds (for example, "ballet" is acceptable here, but it wouldn't qualify for difficulty 3). Here, we can also introduce very common words with highly unintuitive spellings like "laugh" or "height".
+
+#### Difficulty 5
+
+The only limitation here is that these should be words that a child of 10 or younger is likely to encounter (i.e. if the word might appear in a middle grade book, it's ok to put here).

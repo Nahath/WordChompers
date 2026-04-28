@@ -100,6 +100,9 @@ public class GridManager : MonoBehaviour
         // I and L look identical in some fonts — never put both on the same map.
         if (targetLetter == 'I') all.Remove('L');
         else if (targetLetter == 'L') all.Remove('I');
+        // C and K make the same sound — never put both on the same map.
+        if (targetLetter == 'C') all.Remove('K');
+        else if (targetLetter == 'K') all.Remove('C');
         Shuffle(all);
 
         var others = new List<char>();
@@ -108,6 +111,8 @@ public class GridManager : MonoBehaviour
             if (others.Count == GameConfig.LetterOtherCount) break;
             if (ch == 'L' && others.Contains('I')) continue;
             if (ch == 'I' && others.Contains('L')) continue;
+            if (ch == 'K' && others.Contains('C')) continue;
+            if (ch == 'C' && others.Contains('K')) continue;
             others.Add(ch);
         }
 

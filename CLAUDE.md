@@ -67,17 +67,18 @@ Assets/StreamingAssets/Data/
   words.json        { "words": [{ "word", "difficulty", "categories": [] }] }
   levels.json       { "levels": [{ "level", "difficulty" }] }
 ```
-52 words across difficulties 1–5. 100 levels. 5 categories: Food, Animals, Reptiles, Mammals, Birds.
+100 levels. 4 categories: Food, Animals, Reptiles, Clothes.
 
 ## Audio System
 All clips in `Assets/Resources/Audio/` — loaded at runtime via `Resources.Load<AudioClip>`.
 ```
 Audio/SFX/          sfx_player_move, sfx_player_chomp_valid, sfx_level_complete,
-                    sfx_game_over, sfx_monster_eat, sfx_player_scream, sfx_menu_button_press
-Audio/Spoken/       spoken_is_not_a, spoken_chomp_the_letter, spoken_you_chomped, spoken_only_chomp
-Audio/Categories/   header_{name}, category_{name}   (lowercase, e.g. header_food)
-Audio/Words/        word_{word}                       (lowercase, e.g. word_apple)
-Audio/Letters/      letter_{a-z}
+                    sfx_game_over, sfx_monster_eat, sfx_player_scream, sfx_menu_button_press,
+                    sfx_monster_alert
+Audio/Categories/   Eat_{Category}                    (e.g. Eat_Food, Eat_Animals)
+Audio/Words/        {word}_wrong                      (e.g. apple_wrong — one per word in words.json)
+Audio/Letters/      {a-z}_name, {a-z}_sound, {a-z}_wrong
+                    (e.g. a_name, a_sound, a_wrong)
 ```
 `AudioManager.PlaySFX("SFX/sfx_player_move")` — pass the path relative to `Audio/`.
 `AudioManager.PlaySequence(string[])` — plays clips in order, waiting for each to finish.
