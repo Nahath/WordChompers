@@ -19,6 +19,31 @@
       "name": "Clothes",
       "minimumDifficulty": 1,
       "levelHeader": "Eat Clothes"
+    },
+    {
+      "name": "RhymesCat",
+      "minimumDifficulty": 1,
+      "levelHeader": "Rhymes With Cat"
+    },
+    {
+      "name": "RhymesSit",
+      "minimumDifficulty": 1,
+      "levelHeader": "Rhymes With Sit"
+    },
+    {
+      "name": "RhymesSun",
+      "minimumDifficulty": 1,
+      "levelHeader": "Rhymes With Sun"
+    },
+    {
+      "name": "RhymesPet",
+      "minimumDifficulty": 1,
+      "levelHeader": "Rhymes With Pet"
+    },
+    {
+      "name": "RhymesHot",
+      "minimumDifficulty": 1,
+      "levelHeader": "Rhymes With Hot"
     }
   ]
 }

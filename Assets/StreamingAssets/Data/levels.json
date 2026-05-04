@@ -4,6 +4,7 @@
     { "difficulty": 2, "start": 11, "end":  25 },
     { "difficulty": 3, "start": 26, "end":  50 },
     { "difficulty": 4, "start": 51, "end":  75 },
-    { "difficulty": 5, "start": 76, "end": 100 }
+    { "difficulty": 5, "start": 76, "end":  90 },
+    { "difficulty": 6, "start": 91, "end": 100 }
   ]
 }

@@ -25,6 +25,10 @@ public class GameplayUI : MonoBehaviour
     [SerializeField] private GameObject levelCompletePanel;
     [SerializeField] private GameObject gameCompletePanel;
 
+    [Header("Death Message")]
+    [SerializeField] private GameObject deathMessagePanel;
+    [SerializeField] private TMP_Text   deathMessageText;
+
     [Header("Mobile Controls (shown on Android/iOS)")]
     [SerializeField] private GameObject dpadPanel;
     [SerializeField] private GameObject chompButtonPanel;
@@ -39,9 +43,11 @@ public class GameplayUI : MonoBehaviour
 
         gearButton.onClick.AddListener(() => GameManager.Instance.PauseGame());
 
-        GameManager.Instance.OnStateChanged  += HandleStateChanged;
-        GameManager.Instance.OnLivesChanged  += UpdateLivesDisplay;
-        GameManager.Instance.OnLevelReady    += UpdateLevelText;
+        GameManager.Instance.OnStateChanged      += HandleStateChanged;
+        GameManager.Instance.OnLivesChanged      += UpdateLivesDisplay;
+        GameManager.Instance.OnLevelReady        += UpdateLevelText;
+        GameManager.Instance.OnShowDeathMessage  += ShowDeathMessage;
+        GameManager.Instance.OnHideDeathMessage  += HideDeathMessage;
 
         // Show mobile controls only on touch-screen platforms.
         bool mobile = Application.isMobilePlatform;
@@ -55,9 +61,11 @@ public class GameplayUI : MonoBehaviour
     void OnDestroy()
     {
         if (GameManager.Instance == null) return;
-        GameManager.Instance.OnStateChanged -= HandleStateChanged;
-        GameManager.Instance.OnLivesChanged -= UpdateLivesDisplay;
-        GameManager.Instance.OnLevelReady   -= UpdateLevelText;
+        GameManager.Instance.OnStateChanged     -= HandleStateChanged;
+        GameManager.Instance.OnLivesChanged     -= UpdateLivesDisplay;
+        GameManager.Instance.OnLevelReady       -= UpdateLevelText;
+        GameManager.Instance.OnShowDeathMessage -= ShowDeathMessage;
+        GameManager.Instance.OnHideDeathMessage -= HideDeathMessage;
     }
 
     // ── Controller pause button ───────────────────────────────────────────────
@@ -108,5 +116,18 @@ public class GameplayUI : MonoBehaviour
         if (gameOverPanel      != null) gameOverPanel.SetActive(state == GameState.GameOver);
         if (levelCompletePanel != null) levelCompletePanel.SetActive(state == GameState.LevelComplete);
         if (gameCompletePanel  != null) gameCompletePanel.SetActive(state == GameState.GameComplete);
+    }
+
+    private void ShowDeathMessage(string message)
+    {
+        if (deathMessagePanel == null) return;
+        if (deathMessageText  != null) deathMessageText.text = message;
+        deathMessagePanel.SetActive(true);
+    }
+
+    private void HideDeathMessage()
+    {
+        if (deathMessagePanel == null) return;
+        deathMessagePanel.SetActive(false);
     }
 }

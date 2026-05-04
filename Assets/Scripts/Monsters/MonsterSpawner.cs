@@ -177,7 +177,7 @@ public class MonsterSpawner : MonoBehaviour
             if (mr == playerRow && mc == playerCol)
             {
                 m.PlayEatAnimation();
-                GameManager.Instance.ReportMonsterAtePlayer();
+                GameManager.Instance.ReportMonsterAtePlayer(m.MonsterDisplayName);
                 return;
             }
         }

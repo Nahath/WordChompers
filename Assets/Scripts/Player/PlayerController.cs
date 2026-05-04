@@ -11,9 +11,12 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get; private set; }
 
     [Header("References")]
-    [SerializeField] private Animator     animator;
-    [SerializeField] private Image        playerImage;
+    [SerializeField] private Animator      animator;
+    [SerializeField] private Image         playerImage;
     [SerializeField] private RectTransform rectTransform;
+
+    [Header("Character Animators")]
+    [SerializeField] private RuntimeAnimatorController girlAnimatorController;
 
     private const float MoveCooldown = 0.2f;
     private const float MoveAnimDur  = 0.08f;
@@ -32,6 +35,13 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        if (animator != null && girlAnimatorController != null
+            && GameManager.Instance != null
+            && GameManager.Instance.SelectedCharacter == CharacterType.Girl)
+        {
+            animator.runtimeAnimatorController = girlAnimatorController;
+        }
+
         animatorReady = animator != null && animator.runtimeAnimatorController != null;
         if (!animatorReady)
             Debug.LogError("[PlayerController] No AnimatorController on Player — assign one to enable animations.");

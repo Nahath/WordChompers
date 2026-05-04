@@ -4,8 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-public enum GameMode  { ChompWords, ChompLetters }
-public enum GameState { MainMenu, Playing, Paused, LevelComplete, GameOver, GameComplete }
+public enum GameMode      { ChompWords, ChompLetters }
+public enum GameState     { MainMenu, Playing, Paused, LevelComplete, GameOver, GameComplete }
+public enum CharacterType { Boy, Girl }
 
 public class GameManager : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class GameManager : MonoBehaviour
     public event System.Action            OnLevelReady;         // UI can update
     public event System.Action            OnPlayerShouldReset;  // reset to (0,0)
     public event System.Action            OnMonstersShouldClear;
+    public event System.Action<string>    OnShowDeathMessage;
+    public event System.Action            OnHideDeathMessage;
 
     // ── Inspector ─────────────────────────────────────────────────────────────
     [Header("Config")]
@@ -24,8 +27,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int livesGainEveryNLevels   = 5;
 
     // ── Public State ──────────────────────────────────────────────────────────
-    public GameMode  Mode                { get; private set; }
-    public GameState State               { get; private set; } = GameState.MainMenu;
+    public GameMode      Mode            { get; private set; }
+    public GameState     State           { get; private set; } = GameState.MainMenu;
+    public CharacterType SelectedCharacter { get; private set; } = CharacterType.Boy;
     public int       CurrentLevel        { get; private set; }
     public int       Lives               { get; private set; }
     public string    CurrentCategoryName { get; private set; }
@@ -65,6 +69,8 @@ public class GameManager : MonoBehaviour
         playerController = pc;
         monsterSpawner   = ms;
     }
+
+    public void SetCharacter(CharacterType c) => SelectedCharacter = c;
 
     // ── Game Flow ─────────────────────────────────────────────────────────────
 
@@ -118,7 +124,7 @@ public class GameManager : MonoBehaviour
         previousLevelWords = gridManager.GenerateWordLevel(
             CurrentDifficulty, CurrentCategoryName, previousLevelWords);
 
-        AudioManager.Instance.PlaySFX("Categories/Eat_" + CurrentCategoryName);
+        AudioManager.Instance.PlayReminderSFX("Categories/Eat_" + CurrentCategoryName);
 
         playerController.ResetForLevel();
         monsterSpawner.StartSpawning();
@@ -134,7 +140,7 @@ public class GameManager : MonoBehaviour
         gridManager.GenerateLetterLevel(CurrentTargetLetter);
 
         letterUseNameFile = CurrentLevel <= 3 || Random.value < 0.5f;
-        AudioManager.Instance.PlaySFX(LetterReminderFile());
+        AudioManager.Instance.PlayReminderSFX(LetterReminderFile());
 
         playerController.ResetForLevel();
         monsterSpawner.StartSpawning();
@@ -205,16 +211,16 @@ public class GameManager : MonoBehaviour
     private void PlayReminderSound()
     {
         if (Mode == GameMode.ChompWords)
-            AudioManager.Instance.PlaySFX("Categories/Eat_" + CurrentCategoryName);
+            AudioManager.Instance.PlayReminderSFX("Categories/Eat_" + CurrentCategoryName);
         else
-            AudioManager.Instance.PlaySFX(LetterReminderFile());
+            AudioManager.Instance.PlayReminderSFX(LetterReminderFile());
     }
 
     // ── Chomp Reports (called by GridManager) ─────────────────────────────────
 
     public void ReportValidChomp(string wordOrLetter)
     {
-        AudioManager.Instance.PlaySFX("SFX/sfx_player_chomp_valid");
+        AudioManager.Instance.PlayCharacterSFX("SFX/sfx_player_chomp_valid");
         validChompsThisLevel++;
         if (validChompsThisLevel >= 2)
             inExtendedReminderMode = true;
@@ -232,6 +238,7 @@ public class GameManager : MonoBehaviour
     {
         isHandlingSequence = true;
 
+        AudioManager.Instance.StopReminderAudio();
         playerController.PlaySickAnimation();
 
         if (Mode == GameMode.ChompWords)
@@ -239,8 +246,14 @@ public class GameManager : MonoBehaviour
         else
             AudioManager.Instance.PlaySFX("Letters/" + wordOrLetter.ToLower() + "_wrong");
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
+        string notWhat = Mode == GameMode.ChompWords ? CurrentCategoryName : CurrentTargetLetter.ToString();
+        OnShowDeathMessage?.Invoke($"You ate {wordOrLetter}.\nThat's not {notWhat}!");
+
+        yield return new WaitForSeconds(4f);
+
+        OnHideDeathMessage?.Invoke();
         OnMonstersShouldClear?.Invoke();
         monsterSpawner.ResetSpawnTimer();
 
@@ -248,22 +261,29 @@ public class GameManager : MonoBehaviour
         HandleLifeLoss();
     }
 
-    public void ReportMonsterAtePlayer()
+    public void ReportMonsterAtePlayer(string monsterName)
     {
         if (!CanPlayerAct) return;
-        StartCoroutine(MonsterEatSequence());
+        StartCoroutine(MonsterEatSequence(monsterName));
     }
 
-    private IEnumerator MonsterEatSequence()
+
+    private IEnumerator MonsterEatSequence(string monsterName)
     {
         isHandlingSequence = true;
 
+        AudioManager.Instance.StopReminderAudio();
         playerController.HidePlayer();
-        AudioManager.Instance.PlaySFX("SFX/sfx_monster_eat");
-        AudioManager.Instance.PlaySFX("SFX/sfx_player_scream");
+        AudioManager.Instance.PlaySFX("SFX/sfx_monster_eat", 0.3f);
+        AudioManager.Instance.PlayCharacterSFX("SFX/sfx_player_scream");
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
 
+        OnShowDeathMessage?.Invoke($"A {monsterName} ate you!");
+
+        yield return new WaitForSeconds(4f);
+
+        OnHideDeathMessage?.Invoke();
         OnMonstersShouldClear?.Invoke();
         monsterSpawner.ResetSpawnTimer();
 

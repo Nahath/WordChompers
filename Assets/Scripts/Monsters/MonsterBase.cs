@@ -136,7 +136,7 @@ public abstract class MonsterBase : MonoBehaviour
         if (row == pr && col == pc)
         {
             PlayEatAnimation();
-            GameManager.Instance.ReportMonsterAtePlayer();
+            GameManager.Instance.ReportMonsterAtePlayer(MonsterDisplayName);
             return;
         }
 
@@ -147,7 +147,7 @@ public abstract class MonsterBase : MonoBehaviour
     public void PlayEatAnimation()
     {
         if (animatorReady) animator.Play("Eat");
-        AudioManager.Instance.PlaySFX("SFX/sfx_monster_eat");
+        AudioManager.Instance.PlaySFX("SFX/sfx_monster_eat", 0.5f);
     }
 
     // ── Destruction ───────────────────────────────────────────────────────────
@@ -167,6 +167,8 @@ public abstract class MonsterBase : MonoBehaviour
     }
 
     public (int row, int col) GetGridPosition() => (row, col);
+
+    public string MonsterDisplayName => GetType().Name.Replace("Monster", "");
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
